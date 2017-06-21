@@ -28,7 +28,8 @@ app.use(sassMiddleware({
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', require('./routes/index'));
-app.use('/react', require('./routes/react_sample'));
+app.use('/node', require('./routes/node'));
+//app.use('/react', require('./routes/react_sample'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

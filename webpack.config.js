@@ -3,8 +3,8 @@ const path = require('path');
 
 module.exports = {
     entry: {
-        bundle: path.join(__dirname, 'lib', 'react', 'client.jsx'),
-        test: path.join(__dirname, 'lib', 'react', 'client.jsx')
+        nodes: path.join(__dirname, 'lib', 'react', 'nodes.jsx')
+        //,test: path.join(__dirname, 'lib', 'react', 'client.jsx')
     },
     output: {
         path: path.join(__dirname, 'public', 'js'),
@@ -16,7 +16,7 @@ module.exports = {
             loader: 'babel-loader',
             options: {
                 cacheDirectory: 'babel_cache',
-                presets: ['react', 'es2015']
+                presets: ['react', 'es2015', 'stage-3']
             }
         }]
     },

@@ -1,18 +1,47 @@
+html,
 body {
-  padding: 30px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: sans-serif;
+    font-size: 14px;
 }
 
 a {
-  color: inherit;
+    color: inherit;
 }
 
+.login {
+    position: fixed;
+    z-index: 10;
+    top: 10px;
+    right: 10px;
+    margin: 30px;
+}
+
+.nodes-wrap {
+    height: 100%;
+}
 .nodes-container {
+    position: relative;
+    box-sizing: border-box;
+    height: 100%;
+    height: calc(100% - 20px);
+    margin: 10px;
+    padding: 30px;
+    border: 1px solid #eee;
+    background:
+        linear-gradient(0deg, hsla(0, 0%, 0%, 0.15) 1px, transparent 1px) 0 0/auto 50px repeat,
+        linear-gradient(-90deg, hsla(0, 0%, 0%, 0.15) 1px, transparent 1px) 0 0/50px auto repeat,
+        linear-gradient(0deg, hsla(0, 0%, 90%, 1) 1px, transparent 1px) 0 0/auto 10px repeat,
+        linear-gradient(-90deg, hsla(0, 0%, 90%, 1) 1px, transparent 1px) 0 0/10px auto repeat,
+        #fff;
 }
 
 .nodes {
     & {
-        position: relative;
     }
     &::before,
     &::after {
@@ -23,14 +52,13 @@ a {
 
 .node {
     & {
-        position: relative;
+        position: absolute;
         width: -webkit-fit-content;
         width: fit-content;
-        margin: 10px;
+        margin: 20px;
     }
     &.is_draggable {
         & {
-            position: absolute;
             will-change: top, left;
         }
         &::before {
@@ -51,9 +79,11 @@ a {
             cursor: grabbing;
         }
     }
+    &.is_linking {
+    }
     %box {
         box-sizing: border-box;
-        min-width: 3em;
+        min-width: 4.5em;
         min-height: 3em;
         margin: 0;
         padding: 0 1em;
@@ -80,6 +110,7 @@ a {
         -webkit-appearance: none;
     }
     .input:focus {
+        z-index: 10;
         width: auto;
         min-width: 100%;
         outline: none;
@@ -101,6 +132,42 @@ a {
         @extend %btn;
         margin-left: -20px;
     }
+    .add_child {
+        @extend %btn;
+        margin-right: 25px;
+    }
+    .add_child::before {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 1em;
+        height: 1em;
+        margin: auto;
+        font-size: 16px;
+        line-height: 1;
+        cursor: pointer;
+        content: '\ff0b';
+    }
+    .add_link {
+        @extend %btn;
+        margin-right: 50px;
+    }
+    .add_link::before {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 1em;
+        height: 1em;
+        margin: auto;
+        font-size: 16px;
+        line-height: 1;
+        cursor: pointer;
+        content: '\223c';
+    }
     .delete {
         @extend %btn;
     }
@@ -118,6 +185,28 @@ a {
         cursor: pointer;
         content: '\2573';
     }
+    .remove_link {
+        position: absolute;
+        width: 1em;
+        height: 1em;
+        padding: 0;
+        line-height: 1;
+        border: 1px solid #ddd;
+        border-radius: 30%;
+        font-size: 12px;
+        opacity: 0;
+        color: rgba(0,0,0,0.5);
+        background-color:rgba(0,0,0,0.1);
+        cursor: pointer;
+        -webkit-appearance: none;
+    }
+    .remove_link::before {
+        font-size: 1em;
+        content: '\2573';
+    }
+    &:hover .remove_link {
+        opacity: 1;
+    }
     .result {
         & {
             @extend %box;
@@ -133,6 +222,15 @@ a {
         p {
             margin-top: 1.2em;
             margin-bottom: 1.2em;
+        }
+        a {
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+            max-width: 20em;
+            vertical-align: bottom;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
     }
 }

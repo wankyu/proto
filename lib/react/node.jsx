@@ -11,14 +11,23 @@ const InputView = (props) => {
     );
 };
 
+const LinkStemView = (props) => 
+    <button
+        className="remove_link"
+        type="submit"
+        value="Remove Link"
+        aria-label="Remove Link"
+        {...props}
+    />
+
 const ResultView = (props) => {
     return (
         <ReactMarkdown
             className="result"
-            source={props.value}
             softBreak="br"
             escapeHtml
             skipHtml
+            source={props.value}
         />
     );
 };
@@ -47,6 +56,24 @@ class Input extends React.Component {
     }
 }
 
+class LinkStem extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {style: {}};
+    }
+    componentDidMount() {
+    }
+    render() {
+        return (
+            <LinkStemView
+                style={this.state.style}
+                data-node-to={this.props.node_to_id}
+                onClick={this.props.onRemoveLink}
+            />
+        );
+    }
+}
+
 class Result extends React.Component {
     constructor(props) {
         super(props);
@@ -68,11 +95,16 @@ class Node extends React.Component {
             value: props.value,
             position: props.position,
             node_parent: props.node_parent,
+            node_links: props.node_links,
             style: {},
         };
+        this.linkPositions = [];
         this.handleValueChange = this.handleValueChange.bind(this);
         this.handleBlur = this.handleBlur.bind(this);
         this.handleMouseDown = this.handleMouseDown.bind(this);
+        this.handleAddChild = this.handleAddChild.bind(this);
+        this.handleAddLink = this.handleAddLink.bind(this);
+        this.handleRemoveLink = this.handleRemoveLink.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
     }
@@ -80,82 +112,77 @@ class Node extends React.Component {
     }
     componentDidMount() {
         let el = ReactDOM.findDOMNode(this);
-        if(this.state.node_id == -1) {
-            this.handleCreate();
-            this.getPosition();
-        }
-        if(this.props.Draggable) {
-            let el = ReactDOM.findDOMNode(this);
-            el.classList.add('is_draggable');
+        this.setPosition();
+        if(this.props.is_logged_in && this.props.Draggable) {
             this.props.Draggable.appendElement(el);
-            this.setPosition();
+            el.classList.add('is_draggable');
         }
+        if(this.props.is_logged_in && this.props.Linkable) {
+            this.props.Linkable.appendElement(el.querySelector('.add_link'));
+        }
+        if(this.props.Stems) {
+            if(this.state.node_parent != 0) {
+                this.props.Stems.addAscendent(
+                    document.getElementById(this.state.node_parent),
+                    document.getElementById(this.state.node_id)
+                );
+            }
+            this.state.node_links.forEach((node_to_id, i, arr) => {
+                this.props.Stems.addEquivalent(
+                    document.getElementById(this.state.node_id),
+                    document.getElementById(node_to_id)
+                );
+            });
+        }
+    }
+    componentDidUpdate() {
     }
     handleValueChange(data) {
         this.setState({value: data});
     }
     handleBlur(e) {
-        this.handleSubmit();
+        this.handleSubmit(e);
     }
     handleMouseDown(e) {
-        if(this.props.Draggable) {
-            if(e.target.tagName.match(/TEXTAREA|INPUT/)) return;
+        if(this.props.is_logged_in && this.props.Draggable) {
+            if(e.target.tagName.match(/TEXTAREA|INPUT|BUTTON/)) return;
             document.addEventListener('mouseup', this.handleSubmit, {capture: false, once: true});
         }
     }
     handleCreate() {
-        fetch('/node', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                $value: '',
-                $time: Date.now(),
-                $position: this.getPosition(),
-                $node_parent: this.state.node_parent,
-            })
-        }).then((res) => {
-            return res.json();
-        }).then((res) => {
-            this.setState({node_id: res.node_id});
-            this.props.onUpdateNode('-1', this.state);
-        });
+    }
+    handleAddChild(e) {
+        e.preventDefault();
+        this.props.onCreateNode(this.state.node_id, this.state.position);
+    }
+    handleAddLink(e) {
+        e.preventDefault();
+        this.props.onAddLink(this.state.node_id);
+    }
+    handleRemoveLink(e) {
+        e.preventDefault();
+        let from_id = this.state.node_id;
+        let to_id = e.target.dataset['nodeTo'];
+        this.props.onRemoveLink(from_id, to_id);
     }
     handleSubmit(e) {
         //console.log(ReactDOM.findDOMNode(this).offsetParent);
-        if(typeof e !== 'undefined') e.preventDefault();
-        fetch('/node/' + this.state.node_id, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                $value: this.state.value,
-                $time: Date.now(),
-                $position: this.getPosition(),
-                $node_parent: this.state.node_parent,
-            })
+        if(e && e.preventDefault) e.preventDefault();
+        this.setState({position: this.getPosition()});
+        this.props.onUpdateNode(this.state.node_id, {
+            value: this.state.value,
+            position: this.state.position,
         });
-        this.props.onUpdateNode(this.state.node_id, this.state);
     }
     handleDelete(e) {
         e.preventDefault();
-        fetch('/node/' + this.state.node_id, {
-            method: 'DELETE',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({})
-        });
         this.props.onDeleteNode(this.state.node_id);
     }
     setPosition() {
         let sum = this.state.position;
-        this.setState({style: {top: `${sum >> 16 & 0xffff}px`, left:  `${sum & 0xffff}px`}});
+        this.setState({style: Object.assign(this.state.style, {top: `${sum >> 16 & 0xffff}px`, left:  `${sum & 0xffff}px`})});
+    }
+    setLink() {
     }
     getPosition() {
         let el = ReactDOM.findDOMNode(this);
@@ -164,21 +191,33 @@ class Node extends React.Component {
                 Math.max(0, el.offsetLeft - parseInt(window.getComputedStyle(el).marginLeft)),
             ];
         let sum = y << 16 | x;
-        this.setState({position: sum});
         return sum;
     }
     render() {
         return (
             <div id={this.state.node_id} className="node"
                 data-position={this.state.position}
+                //data-parent_id={this.state.node_parent}
                 style={this.state.style}
                 onMouseDown={this.handleMouseDown}
             >
-                <form onSubmit={this.handleSubmit}>
-                    <Input value={this.state.value} onValueChange={this.handleValueChange} onBlur={this.handleBlur} />
-                    <button className="submit" type="submit" value="Submit" />
-                    <button className="delete" type="submit" value="Delete" onClick={this.handleDelete} />
-                </form>
+                {(this.props.is_logged_in)?
+                    <form onSubmit={this.handleSubmit}>
+                        <Input value={this.state.value} onValueChange={this.handleValueChange} onBlur={this.handleBlur} />
+                        <button className="submit" type="submit" value="Submit" />
+                        <button className="add_child" type="submit" value="Add Child" aria-label="Add Child" onClick={this.handleAddChild} />
+                        <button className="add_link" type="submit" value="Add Link" aria-label="Add Link" onMouseDown={this.handleAddLink} />
+                        <button className="delete" type="submit" value="Delete" aria-label="Delete" onClick={this.handleDelete} />
+                        {this.props.node_links.map((link, index) => (
+                            <LinkStem 
+                                key={link}
+                                node_from_id={this.state.node_id}
+                                node_to_id={link}
+                                onRemoveLink={this.handleRemoveLink}
+                            />
+                        ))}
+                    </form>
+                    :''}
                 <Result value={this.state.value} />
             </div>
         );

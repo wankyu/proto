@@ -122,10 +122,11 @@ class Node extends React.Component {
         }
         if(this.props.Stems) {
             if(this.state.node_parent != 0) {
-                this.props.Stems.addAscendent(
-                    document.getElementById(this.state.node_parent),
-                    document.getElementById(this.state.node_id)
-                );
+                if(document.getElementById(this.state.node_parent))
+                    this.props.Stems.addAscendent(
+                        document.getElementById(this.state.node_parent),
+                        document.getElementById(this.state.node_id)
+                    );
             }
             this.state.node_links.forEach((node_to_id, i, arr) => {
                 this.props.Stems.addEquivalent(
@@ -136,6 +137,7 @@ class Node extends React.Component {
         }
     }
     componentDidUpdate() {
+        this.props.Stems.redraw();
     }
     handleValueChange(data) {
         this.setState({value: data});

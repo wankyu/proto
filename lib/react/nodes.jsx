@@ -120,8 +120,6 @@ const setLinksPosition = (node_el) => {
 
 class Nodes extends React.Component {
     constructor(props) {
-        console.log(Url.parse(document.currentScript.src).query);
-
         super(props);
         this.state = {
             nodes: {},

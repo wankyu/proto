@@ -58,7 +58,7 @@ router.get('/', (req, res, next) => {
                 (val, i) => {
                     data[i].node_id = encodeId(data[i].node_id);
                     data[i].node_parent = encodeId(data[i].node_parent);
-                    data[i].node_links = (data[i].node_links)?data[i].node_links.split(','):[];
+                    data[i].node_links = (data[i].node_links)?data[i].node_links.split(',').map((val, i, arr) => encodeId(Number(val))):[];
                 }
             );
             data.push(is_logged_in);//[TODO] more explicitly
@@ -75,7 +75,7 @@ router.post('/:id', (req, res) => {
         let data = Object.assign(req.body, {
                 $node_id: id,
                 $node_parent: decodeId(req.body['$node_parent']),
-                $node_links: req.body['$node_links'].toString(),
+                $node_links: req.body['$node_links'].map((val, i, arr) => decodeId(val)).toString(),
             });
         db.update(id, data, () => {
             res.sendStatus('200');
@@ -85,13 +85,13 @@ router.post('/:id', (req, res) => {
 router.get('/:id', (req, res, next) => {
     let id = decodeId(req.params.id);
     let is_logged_in = req.session.isLoggedIn;
-    db.loadRelated(id, ['node_parent'], function(data){
+    db.loadRelated(id, ['node_parent', 'node_links'], function(data){
         if(data !== undefined) {
             data.forEach(
                 (val, i) => {
                     data[i].node_id = encodeId(data[i].node_id);
                     data[i].node_parent = encodeId(data[i].node_parent);
-                    data[i].node_links = (data[i].node_links)?data[i].node_links.split(','):[];
+                    data[i].node_links = (data[i].node_links)?data[i].node_links.split(',').map((val, i, arr) => encodeId(Number(val))):[];
                 }
             );
             data.push(is_logged_in);//[TODO] more explicitly

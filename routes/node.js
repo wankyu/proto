@@ -84,7 +84,8 @@ router.post('/:id', (req, res) => {
 });
 router.get('/:id', (req, res, next) => {
     let id = decodeId(req.params.id);
-    db.load(id, function(data){
+    let is_logged_in = req.session.isLoggedIn;
+    db.loadRelated(id, ['node_parent'], function(data){
         if(data !== undefined) {
             data.forEach(
                 (val, i) => {
@@ -93,6 +94,7 @@ router.get('/:id', (req, res, next) => {
                     data[i].node_links = (data[i].node_links)?data[i].node_links.split(','):[];
                 }
             );
+            data.push(is_logged_in);//[TODO] more explicitly
             res.send(data);
         } else {
             res.sendStatus('204');
@@ -106,6 +108,11 @@ router.delete('/:id', (req, res, next) => {
             res.status(204).send('deleted');
         }, next);
     });
+});
+
+router.get('/view/:id', (req, res, next) => {
+    let root_node_id = req.params.id;
+    res.render('index.jsx', {rootNodeId: root_node_id, isLoggedIn: req.session.isLoggedIn});
 });
 
 module.exports = router;

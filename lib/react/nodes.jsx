@@ -1,11 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Url from 'url';
 import Node from './node.jsx';
 import Draggable from '../draggable';
 import Stems from '../stems';
 
 const NodesView = ({nodes, ...props}) =>
-    <div className="nodes">
+    <div className="nodes" data-root={props.root_node_id}>
         {Object.keys(nodes).map((id, index) => (
             <Node
                 key={id}
@@ -119,10 +120,13 @@ const setLinksPosition = (node_el) => {
 
 class Nodes extends React.Component {
     constructor(props) {
+        console.log(Url.parse(document.currentScript.src).query);
+
         super(props);
         this.state = {
             nodes: {},
             is_logged_in: false,
+            root_node_id: Url.parse(document.currentScript.src).query || '0'
         };
         this.modules = {};
         this.handleCreateNode = this.handleCreateNode.bind(this);
@@ -135,7 +139,8 @@ class Nodes extends React.Component {
     componentWillMount() {
     }
     componentDidMount() {
-        fetch('/node', {
+        let fetch_url = (this.state.root_node_id != 0)?`/node/${this.state.root_node_id}`:'/node';
+        fetch(fetch_url, {
             method: 'GET',
             credentials: 'include',
             headers: {
@@ -233,9 +238,8 @@ class Nodes extends React.Component {
         });
     }
     handleCreateNewNode(e) {
-        let default_parent_id = '0';
         e.preventDefault();
-        this.handleCreateNode(default_parent_id, 0);
+        this.handleCreateNode(this.state.root_node_id, 0);
     }
     handleAddLink(from_id) {
         document.addEventListener('linked', (e) => {
@@ -336,6 +340,7 @@ class Nodes extends React.Component {
                     :''}
                 <NodesView
                     nodes={this.state.nodes}
+                    root_node_id={this.state.root_node_id}
                     is_logged_in={this.state.is_logged_in}
                     onCreateNode={this.handleCreateNode}
                     onAddLink={this.handleAddLink}

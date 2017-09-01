@@ -11,12 +11,10 @@ const LoginButton = (props) => {
 class HelloMessage extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            isLoggedIn: this.props.isLoggedIn || false
-        };
     }
     render() {
-        let is_logged_in = this.state.isLoggedIn;
+        let is_logged_in = this.props.isLoggedIn || false;
+        let root_node_id = this.props.rootNodeId || '';
         return (
                 <html>
                 <head>
@@ -26,7 +24,7 @@ class HelloMessage extends React.Component {
                 <body>
                     <LoginButton isLoggedIn={is_logged_in} />
                     <div id="nodes-wrap" className="nodes-wrap"></div>
-                    <script src="/js/nodes.js"></script>
+                    <script src={"/js/nodes.js?" + root_node_id}></script>
                 </body>
                 </html>
         );

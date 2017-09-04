@@ -162,6 +162,35 @@ class Nodes extends React.Component {
                 });
             });
             this.Stems.redraw();
+
+            let setContainerDraggable = new Draggable({
+                drag_handle_elements: [ReactDOM.findDOMNode(this), ReactDOM.findDOMNode(this).parentNode],
+                drag_target_elements: [ReactDOM.findDOMNode(this)],
+                onDragInit: () => {
+                    if(this.state.root_node_id != 0) {
+                        let sum = this.state.nodes[this.state.root_node_id].position;
+                        Object.assign(ReactDOM.findDOMNode(this).style, {
+                            top: `-${sum >> 16 & 0xffff}px`,
+                            left: `-${sum & 0xffff}px`
+                        });
+                    }
+                },
+                onDragStart: (e, el, pos) => {
+                    //console.log('start', pos);
+                    el.classList.add('is_dragging');
+                    el.style.cursor = "move";
+                },
+                onDragging: (e, el, pos) => {
+                    //console.log('moving', pos);
+                    el.style.top = `${pos.y}px`;
+                    el.style.left = `${pos.x}px`;
+                },
+                onDragEnd: (e, el, pos) => {
+                    //console.log('end', pos, el.offsetTop << 16 | el.offsetLeft);
+                    el.style.cursor = "";
+                    el.classList.remove('is_dragging');
+                }
+            });
         });
     }
     handleCreateNode(node_parent_id, pos) {

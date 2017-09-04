@@ -30,7 +30,14 @@ a {
     height: 100%;
     height: calc(100% - 20px);
     margin: 10px;
-    padding: 30px;
+}
+.nodes-container::before {
+    position:fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: inherit;
     border: 1px solid #eee;
     background:
         linear-gradient(0deg, hsla(0, 0%, 0%, 0.15) 1px, transparent 1px) 0 0/auto 50px repeat,
@@ -38,6 +45,8 @@ a {
         linear-gradient(0deg, hsla(0, 0%, 90%, 1) 1px, transparent 1px) 0 0/auto 10px repeat,
         linear-gradient(-90deg, hsla(0, 0%, 90%, 1) 1px, transparent 1px) 0 0/10px auto repeat,
         #fff;
+    pointer-events: none;
+    content:'';
 }
 
 .nodes {

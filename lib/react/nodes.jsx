@@ -170,8 +170,8 @@ class Nodes extends React.Component {
                     if(this.state.root_node_id != 0) {
                         let sum = this.state.nodes[this.state.root_node_id].position;
                         Object.assign(ReactDOM.findDOMNode(this).style, {
-                            top: `-${sum >> 16 & 0xffff}px`,
-                            left: `-${sum & 0xffff}px`
+                            top: `${(sum >> 16 & 0xffff) * -1 + 60}px`,
+                            left: `${(sum & 0xffff) * -1 + 30}px`
                         });
                     }
                 },
@@ -363,7 +363,7 @@ class Nodes extends React.Component {
         return (
             <div className="nodes-container">
                 {(this.state.is_logged_in)?
-                    <input type="submit" value="Create" onClick={this.handleCreateNewNode} />
+                    <input className="create_node" type="submit" value="Create" onClick={this.handleCreateNewNode} />
                     :''}
                 <NodesView
                     nodes={this.state.nodes}

@@ -48,6 +48,16 @@ a {
     pointer-events: none;
     content:'';
 }
+.nodes-container .create_node {
+    position: fixed;
+    z-index: 10;
+    top: 10px;
+    left: 10px;
+    margin: 30px;
+    border: 1px solid;
+    background-color: #fff;
+    -webkit-appearance: none;
+}
 
 .nodes {
     & {
@@ -126,16 +136,33 @@ a {
         opacity: 1;
     }
     %btn {
-        overflow: hidden;
-        position: absolute;
-        bottom: 100%;
-        right: 0;
-        width: 20px;
-        height: 20px;
-        padding: 0;
-        border: 1px solid #ddd;
-        background: none;
-        -webkit-appearance: none;
+        & {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            width: 20px;
+            height: 20px;
+            padding: 0;
+            border: 1px solid #ddd;
+            background: none;
+            -webkit-appearance: none;
+        }
+        &::after {
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            margin: 5px -2px;
+            padding: 2px 5px;
+            border: 1px solid #777;
+            white-space: nowrap;
+            opacity: 0.7;
+            background-color: #fff;
+            content: attr(aria-label);
+        }
+        &:hover::after {
+            display: block;
+        }
     }
     .submit {
         @extend %btn;

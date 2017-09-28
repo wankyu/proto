@@ -10,11 +10,12 @@ const Result = (props) => {
    );
 };
 
-const Form = () => {
+const Form = (props) => {
     return (
         <form action="./login" method="post">
             <input name="username" type="text" placeholder="Username" />
             <input name="password" type="password" placeholder="Password" />
+            <input name="referer" type="hidden" value={props.referer} />
             <input type="submit" value="Submit" />
         </form>
     );
@@ -31,7 +32,7 @@ class Login extends React.Component {
                 <body>
                     <h5>Login</h5>
                     <Result {...this.props} />
-                    <Form />
+                    <Form referer={this.props.referer} />
                 </body>
                 </html>
         );

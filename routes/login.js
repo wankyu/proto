@@ -1,3 +1,4 @@
+const url = require('url');
 const express = require('express');
 const router = express.Router();
 
@@ -11,7 +12,7 @@ router.get('/', function(req, res, next) {
         let name = req.session.username || 'none';
         let checkpw = req.session.isLoggedIn || false;
         console.log('id:::', req.sessionID);
-        res.render('login.jsx', {test: name, checkpw: checkpw});
+        res.render('login.jsx', {test: name, checkpw: checkpw, referer: url.parse(req.headers.referer).pathname});
     }
 });
 
@@ -21,7 +22,7 @@ router.post('/', function(req, res, next) {
     console.log('id:::', req.sessionID);
     req.session.save(() => {
         //console.log('login:::', req.session);
-        res.redirect('/');
+        res.redirect(req.body.referer);
     });
 });
 

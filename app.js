@@ -53,7 +53,6 @@ app.use(function(req, res, next) {
 app.use('/node', require('./routes/node'));
 app.use('/login', require('./routes/login'));
 app.use('/', require('./routes/index'));
-//app.use('/react', require('./routes/react_sample'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -110,10 +110,5 @@ router.delete('/:id', (req, res, next) => {
     });
 });
 
-router.get('/view/:id', (req, res, next) => {
-    let root_node_id = req.params.id;
-    res.render('index.jsx', {rootNodeId: root_node_id, isLoggedIn: req.session.isLoggedIn});
-});
-
 module.exports = router;
 

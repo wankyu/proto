@@ -35,17 +35,15 @@ const ResultView = (props) => {
 class Input extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {value: this.props.value};
         this.handleChange = this.handleChange.bind(this);
     }
     componentWillUnmount() {
     }
     handleChange(e) {
-        this.setState({value: e.target.value});
-        this.props.onValueChange(e.target.value);
+        this.props.onValueChange(e);
     }
     render() {
-        let value = this.state.value;
+        let value = this.props.value;
         return (
             <InputView
                 value={value}
@@ -139,8 +137,8 @@ class Node extends React.Component {
     componentDidUpdate() {
         this.props.Stems.redraw();
     }
-    handleValueChange(data) {
-        this.setState({value: data});
+    handleValueChange(e) {
+        this.setState({value: e.target.value});
     }
     handleBlur(e) {
         this.handleSubmit(e);

@@ -32,3 +32,6 @@ npm-debug.log
 babel_cache
 .local
 *.css.map
+
+public/css/*
+public/js/*

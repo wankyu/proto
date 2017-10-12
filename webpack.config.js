@@ -32,6 +32,12 @@ module.exports = {
             sourcemap: false,
             beautify: false,
             dead_code: true
-        })
+        }),
+        function() {
+            this.plugin('watch-run', function(watching, callback) {
+                console.log('Begin compile at ' + new Date());
+                callback();
+            })
+        }
     ]
 };

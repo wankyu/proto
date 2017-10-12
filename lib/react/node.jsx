@@ -34,19 +34,16 @@ const ResultView = (props) => {
 class Input extends React.Component {
     constructor(props) {
         super(props);
-        this.handleChange = this.handleChange.bind(this);
     }
     componentWillUnmount() {
-    }
-    handleChange(e) {
-        this.props.onValueChange(e);
     }
     render() {
         let value = this.props.value;
         return (
             <InputView
                 value={value}
-                onChange={this.handleChange}
+                onChange={this.props.onValueChange}
+                onFocus={this.props.onFocus}
                 onBlur={this.props.onBlur}
             />
         );
@@ -95,8 +92,10 @@ class Node extends React.Component {
             node_links: props.node_links,
             style: {},
         };
+        this.node_el = null;
         this.linkPositions = [];
         this.handleValueChange = this.handleValueChange.bind(this);
+        this.handleFocus = this.handleFocus.bind(this);
         this.handleBlur = this.handleBlur.bind(this);
         this.handleMouseDown = this.handleMouseDown.bind(this);
         this.handleAddChild = this.handleAddChild.bind(this);
@@ -108,7 +107,7 @@ class Node extends React.Component {
     componentWillMount() {
     }
     componentDidMount() {
-        let el = ReactDOM.findDOMNode(this);
+        let el = this.node_el = ReactDOM.findDOMNode(this);
         this.setPosition();
         if(this.props.is_logged_in && this.props.Draggable) {
             this.props.Draggable.appendElement(el);
@@ -139,7 +138,11 @@ class Node extends React.Component {
     handleValueChange(e) {
         this.setState({value: e.target.value});
     }
+    handleFocus(e) {
+        this.node_el.classList.add('is_selected');
+    }
     handleBlur(e) {
+        this.node_el.classList.remove('is_selected');
         this.handleSubmit(e);
     }
     handleMouseDown(e) {
@@ -165,7 +168,6 @@ class Node extends React.Component {
         this.props.onRemoveLink(from_id, to_id);
     }
     handleSubmit(e) {
-        //console.log(ReactDOM.findDOMNode(this).offsetParent);
         if(e && e.preventDefault) e.preventDefault();
         this.setState({position: this.getPosition()});
         this.props.onUpdateNode(this.state.node_id, {
@@ -184,7 +186,7 @@ class Node extends React.Component {
     setLink() {
     }
     getPosition() {
-        let el = ReactDOM.findDOMNode(this);
+        let el = this.node_el;
         let [y, x] = [
                 Math.max(0, el.offsetTop - parseInt(window.getComputedStyle(el).marginTop)),
                 Math.max(0, el.offsetLeft - parseInt(window.getComputedStyle(el).marginLeft)),
@@ -202,7 +204,7 @@ class Node extends React.Component {
             >
                 {(this.props.is_logged_in)?
                     <form onSubmit={this.handleSubmit}>
-                        <Input value={this.state.value} onValueChange={this.handleValueChange} onBlur={this.handleBlur} />
+                        <Input value={this.state.value} onValueChange={this.handleValueChange} onFocus={this.handleFocus} onBlur={this.handleBlur} />
                         <button className="submit" type="submit" value="Submit" />
                         <button className="add_child" type="submit" value="Add Child" aria-label="Add Child" onClick={this.handleAddChild} />
                         <button className="add_link" type="submit" value="Add Link" aria-label="Add Link" onMouseDown={this.handleAddLink} />

@@ -1,3 +1,5 @@
+$node_selected_color: blue;
+
 html,
 body {
     height: 100%;
@@ -75,6 +77,9 @@ a {
         width: -webkit-fit-content;
         width: fit-content;
         margin: 20px;
+    }
+    &.is_selected {
+        box-shadow: 0 0 6px $node_selected_color;
     }
     &.is_draggable {
         & {

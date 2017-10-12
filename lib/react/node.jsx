@@ -26,7 +26,6 @@ const ResultView = (props) => {
             className="result"
             softBreak="br"
             escapeHtml
-            skipHtml
             source={props.value}
         />
     );

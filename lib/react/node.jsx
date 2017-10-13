@@ -209,6 +209,7 @@ class Node extends React.Component {
                         <button className="add_child" type="submit" value="Add Child" aria-label="Add Child" onClick={this.handleAddChild} />
                         <button className="add_link" type="submit" value="Add Link" aria-label="Add Link" onMouseDown={this.handleAddLink} />
                         <button className="delete" type="submit" value="Delete" aria-label="Delete" onClick={this.handleDelete} />
+                        <a className="url" href={`/${this.state.node_id}`} aria-label="URL">URL</a>
                         {this.props.node_links.map((link, index) => (
                             <LinkStem 
                                 key={link}

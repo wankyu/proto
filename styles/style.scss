@@ -1,5 +1,27 @@
 $node_selected_color: blue;
 
+@mixin hide-text {
+    overflow: hidden;
+    text-indent: 150%;
+    white-space: nowrap;
+}
+@mixin material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    letter-spacing: normal;
+    text-transform: none;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+}
+
+%material-icons {
+    @include material-icons;
+}
+
 html,
 body {
     height: 100%;
@@ -13,6 +35,34 @@ body {
 
 a {
     color: inherit;
+}
+
+.home {
+    & {
+        @include hide-text;
+        position: fixed;
+        z-index: 10;
+        top: 10px;
+        left: 10px;
+        box-sizing: border-box;
+        width: 20px;
+        height: 20px;
+        margin: 30px;
+        border: 1px solid;
+        text-decoration: none;
+        background-color: #fff;
+    }
+    &::before {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 6px;
+        width: 1em;
+        height: 1em;
+        margin: auto;
+        text-indent: 0;
+        content: '/';
+    }
 }
 
 .login {
@@ -51,14 +101,33 @@ a {
     content:'';
 }
 .nodes-container .create_node {
-    position: fixed;
-    z-index: 10;
-    top: 10px;
-    left: 10px;
-    margin: 30px;
-    border: 1px solid;
-    background-color: #fff;
-    -webkit-appearance: none;
+    & {
+        @include hide-text;
+        position: fixed;
+        z-index: 10;
+        top: 10px;
+        left: 10px + 30px;
+        width: 20px;
+        height: 20px;
+        margin: 30px;
+        border: 1px solid;
+        background-color: #fff;
+        -webkit-appearance: none;
+    }
+    &::before {
+        @extend %material-icons;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 1em;
+        height: 1em;
+        margin: auto;
+        font-size: 16px;
+        text-indent: 0;
+        content: 'note_add';
+    }
 }
 
 .nodes {
@@ -107,7 +176,7 @@ a {
     }
     %box {
         box-sizing: border-box;
-        min-width: 4.5em;
+        min-width: 6.5em;
         min-height: 3em;
         margin: 0;
         padding: 0 1em;
@@ -141,17 +210,18 @@ a {
         opacity: 1;
     }
     %btn {
-        & {
-            position: absolute;
-            bottom: 100%;
-            right: 0;
-            width: 20px;
-            height: 20px;
-            padding: 0;
-            border: 1px solid #ddd;
-            background: none;
-            -webkit-appearance: none;
-        }
+        position: absolute;
+        bottom: 100%;
+        right: 0;
+        box-sizing: border-box;
+        width: 20px;
+        height: 20px;
+        padding: 0;
+        border: 1px solid #ddd;
+        background: none;
+        -webkit-appearance: none;
+    }
+    %btn_tooltip {
         &::after {
             display: none;
             position: absolute;
@@ -169,67 +239,75 @@ a {
             display: block;
         }
     }
+    @mixin btn_icon {
+        @extend %btn_icon;
+        &::before {
+            @content;
+        }
+    }
+    %btn_icon {
+        &::before {
+            @extend %material-icons;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 1em;
+            height: 1em;
+            margin: auto;
+            font-size: 16px;
+            line-height: 1;
+            text-indent: 0;
+            cursor: pointer;
+        }
+    }
     .submit {
         @extend %btn;
+        @extend %btn_tooltip;
         margin-left: -20px;
     }
     .add_child {
         @extend %btn;
+        @extend %btn_tooltip;
+        @include btn_icon {
+            content: '\ff0b';
+            content: 'subdirectory_arrow_right';
+        }
         margin-right: 25px;
-    }
-    .add_child::before {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        width: 1em;
-        height: 1em;
-        margin: auto;
-        font-size: 16px;
-        line-height: 1;
-        cursor: pointer;
-        content: '\ff0b';
     }
     .add_link {
         @extend %btn;
+        @extend %btn_tooltip;
+        @include btn_icon {
+            content: '\223c';
+            content: 'my_location';
+        }
         margin-right: 50px;
-    }
-    .add_link::before {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        width: 1em;
-        height: 1em;
-        margin: auto;
-        font-size: 16px;
-        line-height: 1;
-        cursor: pointer;
-        content: '\223c';
     }
     .delete {
         @extend %btn;
+        @extend %btn_tooltip;
+        @include btn_icon {
+            content: '\2573';
+            content: 'close';
+        }
     }
-    .delete::before {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        width: 1em;
-        height: 1em;
-        margin: auto;
-        font-size: 16px;
-        line-height: 1;
-        cursor: pointer;
-        content: '\2573';
+    .url {
+        @extend %btn;
+        @extend %btn_tooltip;
+        @include btn_icon {
+            content: '\1F517';
+            content: 'link';
+        }
+        @include hide-text;
+        margin-right: 75px;
     }
     .remove_link {
+        @extend %material-icons;
         position: absolute;
-        width: 1em;
-        height: 1em;
+        width: 1.13em;
+        height: 1.13em;
         padding: 0;
         line-height: 1;
         border: 1px solid #ddd;
@@ -242,8 +320,8 @@ a {
         -webkit-appearance: none;
     }
     .remove_link::before {
-        font-size: 1em;
         content: '\2573';
+        content: 'clear';
     }
     &:hover .remove_link {
         opacity: 1;

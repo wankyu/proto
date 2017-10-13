@@ -5,6 +5,8 @@ import Node from './node.jsx';
 import Draggable from '../draggable';
 import Stems from '../stems';
 
+let default_root_node_id = 0;
+
 const NodesView = ({nodes, ...props}) =>
     <div className="nodes" data-root={props.root_node_id}>
         {Object.keys(nodes).map((id, index) => (
@@ -124,7 +126,7 @@ class Nodes extends React.Component {
         this.state = {
             nodes: {},
             is_logged_in: false,
-            root_node_id: Url.parse(document.currentScript.src).query || '0'
+            root_node_id: Url.parse(document.currentScript.src).query || default_root_node_id
         };
         this.modules = {};
         this.handleCreateNode = this.handleCreateNode.bind(this);
@@ -137,7 +139,7 @@ class Nodes extends React.Component {
     componentWillMount() {
     }
     componentDidMount() {
-        let fetch_url = (this.state.root_node_id != 0)?`/node/${this.state.root_node_id}`:'/node';
+        let fetch_url = (this.state.root_node_id != default_root_node_id)?`/node/${this.state.root_node_id}`:'/node';
         fetch(fetch_url, {
             method: 'GET',
             credentials: 'include',
@@ -167,7 +169,7 @@ class Nodes extends React.Component {
                 drag_handle_elements: [ReactDOM.findDOMNode(this), ReactDOM.findDOMNode(this).parentNode],
                 drag_target_elements: [ReactDOM.findDOMNode(this)],
                 onDragInit: () => {
-                    if(this.state.root_node_id != 0) {
+                    if(this.state.root_node_id != default_root_node_id) {
                         let sum = this.state.nodes[this.state.root_node_id].position;
                         Object.assign(ReactDOM.findDOMNode(this).style, {
                             top: `${(sum >> 16 & 0xffff) * -1 + 60}px`,
@@ -266,7 +268,7 @@ class Nodes extends React.Component {
     }
     handleCreateNewNode(e) {
         e.preventDefault();
-        this.handleCreateNode(this.state.root_node_id, 0);
+        this.handleCreateNode(this.state.root_node_id, default_root_node_id);
     }
     handleAddLink(from_id) {
         document.addEventListener('linked', (e) => {
@@ -362,8 +364,8 @@ class Nodes extends React.Component {
     render() {
         return (
             <div className="nodes-container">
-                {(this.state.is_logged_in)?
-                    <input className="create_node" type="submit" value="Create" onClick={this.handleCreateNewNode} />
+                {(this.state.is_logged_in && this.state.root_node_id == default_root_node_id)?
+                    <button className="create_node" type="submit" value="Create" aria-label="Create" onClick={this.handleCreateNewNode} />
                     :''}
                 <NodesView
                     nodes={this.state.nodes}

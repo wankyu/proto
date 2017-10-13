@@ -5,7 +5,7 @@ import Node from './node.jsx';
 import Draggable from '../draggable';
 import Stems from '../stems';
 
-let default_root_node_id = 0;
+let default_root_node_id = "0";
 
 const NodesView = ({nodes, ...props}) =>
     <div className="nodes" data-root={props.root_node_id}>
@@ -29,17 +29,6 @@ const deleteNode = (id) => {
     return (prev_state, props) => {
         let nodes = prev_state.nodes;
         delete nodes[id];
-        for(let node_id in nodes) {
-            let node = nodes[node_id];
-            if(node.node_parent == id) {
-                node.node_parent = 0;
-                this.handleUpdateNode(node_id, node);
-            }
-            if(node.node_links.indexOf(id) >= 0) {
-                node.node_links.splice(node.node_links.indexOf(id), 1);
-                this.handleUpdateNode(node_id, node);
-            }
-        }
         return {nodes: nodes};
     };
 };
@@ -135,6 +124,8 @@ class Nodes extends React.Component {
         this.handleCreateNewNode = this.handleCreateNewNode.bind(this);
         this.handleAddLink = this.handleAddLink.bind(this);
         this.handleRemoveLink = this.handleRemoveLink.bind(this);
+    }
+    componentDidUpdate(prevProps, prevState) {
     }
     componentWillMount() {
     }
@@ -261,6 +252,17 @@ class Nodes extends React.Component {
                 this.Stems.removeEquivalent(document.getElementById(id));
                 this.Stems.redraw();
                 this.setState(deleteNode(id));
+                for(let node_id in this.state.nodes) {
+                    let node = this.state.nodes[node_id];
+                    if(node.node_parent == id) {
+                        node.node_parent = default_root_node_id;
+                        this.handleUpdateNode(node_id, node);
+                    }
+                    if(node.node_links.indexOf(id) >= 0) {
+                        node.node_links.splice(node.node_links.indexOf(id), 1);
+                        this.handleUpdateNode(node_id, node);
+                    }
+                }
             } else {
                 console.log(res.status);
             }

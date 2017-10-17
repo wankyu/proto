@@ -155,35 +155,7 @@ class Nodes extends React.Component {
                 });
             });
             this.Stems.redraw();
-
-            let setContainerDraggable = new Draggable({
-                drag_handle_elements: [ReactDOM.findDOMNode(this), ReactDOM.findDOMNode(this).parentNode],
-                drag_target_elements: [ReactDOM.findDOMNode(this)],
-                onDragInit: () => {
-                    if(this.state.root_node_id != default_root_node_id) {
-                        let sum = this.state.nodes[this.state.root_node_id].position;
-                        Object.assign(ReactDOM.findDOMNode(this).style, {
-                            top: `${(sum >> 16 & 0xffff) * -1 + 60}px`,
-                            left: `${(sum & 0xffff) * -1 + 30}px`
-                        });
-                    }
-                },
-                onDragStart: (e, el, pos) => {
-                    //console.log('start', pos);
-                    el.classList.add('is_dragging');
-                    el.style.cursor = "move";
-                },
-                onDragging: (e, el, pos) => {
-                    //console.log('moving', pos);
-                    el.style.top = `${pos.y}px`;
-                    el.style.left = `${pos.x}px`;
-                },
-                onDragEnd: (e, el, pos) => {
-                    //console.log('end', pos, el.offsetTop << 16 | el.offsetLeft);
-                    el.style.cursor = "";
-                    el.classList.remove('is_dragging');
-                }
-            });
+            this.setContainerScrollable();
         });
     }
     handleCreateNode(node_parent_id, pos) {
@@ -362,6 +334,30 @@ class Nodes extends React.Component {
             }
         });
         Object.assign(this.modules, {Linkable: this.Linkable});
+    }
+    setContainerScrollable() {
+        let container_style = ReactDOM.findDOMNode(this).style;
+        let container_pos = {};
+        if(this.state.root_node_id != default_root_node_id) {
+            let sum = this.state.nodes[this.state.root_node_id].position;
+            container_pos = {
+                top: `${(sum >> 16 & 0xffff) * -1 + 60}px`,
+                left: `${(sum & 0xffff) * -1 + 30}px`
+            };
+        } else {
+            container_pos = {
+                top: '0px',
+                left: '0px'
+            };
+        }
+        Object.assign(container_style, container_pos);
+        document.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            Object.assign(container_style, {
+                top: `${parseInt(container_style.top) - e.deltaY}px`,
+                left: `${parseInt(container_style.left) - e.deltaX}px`
+            });
+        });
     }
     render() {
         return (

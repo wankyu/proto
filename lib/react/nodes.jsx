@@ -4,6 +4,8 @@ import Url from 'url';
 import Node from './node.jsx';
 import Draggable from '../draggable';
 import Stems from '../stems';
+import fSum from '../sum';
+const Sum = new fSum(4, 2);
 
 let default_root_node_id = "0";
 
@@ -160,7 +162,7 @@ class Nodes extends React.Component {
     }
     handleCreateNode(node_parent_id, pos) {
         let init_position_margin = 20;
-        pos = pos + (init_position_margin << 16 | init_position_margin);
+        pos = pos + Sum.create(init_position_margin, init_position_margin);
         fetch('/node', {
             method: 'POST',
             credentials: 'include',
@@ -339,10 +341,10 @@ class Nodes extends React.Component {
         let container_style = ReactDOM.findDOMNode(this).style;
         let container_pos = {};
         if(this.state.root_node_id != default_root_node_id) {
-            let sum = this.state.nodes[this.state.root_node_id].position;
+            let pos = Sum.extract(this.state.nodes[this.state.root_node_id].position);
             container_pos = {
-                top: `${(sum >> 16 & 0xffff) * -1 + 60}px`,
-                left: `${(sum & 0xffff) * -1 + 30}px`
+                top: `${pos[0] * -1 + 60}px`,
+                left: `${pos[1] * -1 + 30}px`
             };
         } else {
             container_pos = {

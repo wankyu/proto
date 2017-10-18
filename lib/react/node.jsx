@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import ReactMarkdown from 'react-markdown';
+import fSum from '../sum';
+const Sum = new fSum(4, 2);
 
 const InputView = (props) => {
     return (
@@ -180,8 +182,8 @@ class Node extends React.Component {
         this.props.onDeleteNode(this.state.node_id);
     }
     setPosition() {
-        let sum = this.state.position;
-        this.setState({style: Object.assign(this.state.style, {top: `${sum >> 16 & 0xffff}px`, left:  `${sum & 0xffff}px`})});
+        let pos = Sum.extract(this.state.position);
+        this.setState({style: Object.assign(this.state.style, {top: `${pos[0]}px`, left:  `${pos[1]}px`})});
     }
     setLink() {
     }
@@ -191,8 +193,7 @@ class Node extends React.Component {
                 Math.max(0, el.offsetTop - parseInt(window.getComputedStyle(el).marginTop)),
                 Math.max(0, el.offsetLeft - parseInt(window.getComputedStyle(el).marginLeft)),
             ];
-        let sum = y << 16 | x;
-        return sum;
+        return Sum.create(y, x);
     }
     render() {
         return (

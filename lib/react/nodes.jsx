@@ -39,8 +39,8 @@ const setNodePosition = (node_el, pos) => {
     pos.x = parseInt(pos.x / snap_step) * snap_step;
     pos.y = parseInt(pos.y / snap_step) * snap_step;
     Object.assign(node_el.style, {
-        top: `${Math.max(pos.y, 0)}px`,
-        left: `${Math.max(pos.x, 0)}px`
+        top: `${pos.y}px`,
+        left: `${pos.x}px`
     });
 };
 const setLinksPosition = (node_el) => {
@@ -162,7 +162,7 @@ class Nodes extends React.Component {
     }
     handleCreateNode(e, node_parent_id, pos) {
         //let init_position = {x: e.clientX, y: e.clientY}
-        let init_position_margin = 20;
+        let init_position_margin = 30;
         pos = pos + Sum.create(init_position_margin, init_position_margin);
         fetch('/node', {
             method: 'POST',

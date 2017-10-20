@@ -190,8 +190,8 @@ class Node extends React.Component {
     getPosition() {
         let el = this.node_el;
         let [y, x] = [
-                Math.max(0, el.offsetTop - parseInt(window.getComputedStyle(el).marginTop)),
-                Math.max(0, el.offsetLeft - parseInt(window.getComputedStyle(el).marginLeft)),
+                el.offsetTop - parseInt(window.getComputedStyle(el).marginTop),
+                el.offsetLeft - parseInt(window.getComputedStyle(el).marginLeft),
             ];
         return Sum.create(y, x);
     }

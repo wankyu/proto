@@ -157,7 +157,7 @@ class Node extends React.Component {
     }
     handleAddChild(e) {
         e.preventDefault();
-        this.props.onCreateNode(this.state.node_id, this.state.position);
+        this.props.onCreateNode(e, this.state.node_id, this.state.position);
     }
     handleAddLink(e) {
         e.preventDefault();

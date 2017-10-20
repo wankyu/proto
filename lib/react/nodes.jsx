@@ -160,7 +160,8 @@ class Nodes extends React.Component {
             this.setContainerScrollable();
         });
     }
-    handleCreateNode(node_parent_id, pos) {
+    handleCreateNode(e, node_parent_id, pos) {
+        //let init_position = {x: e.clientX, y: e.clientY}
         let init_position_margin = 20;
         pos = pos + Sum.create(init_position_margin, init_position_margin);
         fetch('/node', {
@@ -244,7 +245,8 @@ class Nodes extends React.Component {
     }
     handleCreateNewNode(e) {
         e.preventDefault();
-        this.handleCreateNode(this.state.root_node_id, default_root_node_id);
+        let default_position = 0;
+        this.handleCreateNode(e, this.state.root_node_id, default_position);
     }
     handleAddLink(from_id) {
         document.addEventListener('linked', (e) => {

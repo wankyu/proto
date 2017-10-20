@@ -23,8 +23,10 @@ class HelloMessage extends React.Component {
                     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
                 </head>
                 <body>
-                    <LoginButton isLoggedIn={is_logged_in} />
-                    <a className="home" href="/">Home</a>
+                    <div className="header">
+                        <LoginButton isLoggedIn={is_logged_in} />
+                        <a className="home" href="/">Home</a>
+                    </div>
                     <div id="nodes-wrap" className="nodes-wrap"></div>
                     <script src={"/js/nodes.js?" + root_node_id}></script>
                 </body>

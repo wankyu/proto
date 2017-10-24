@@ -184,7 +184,7 @@ a {
     %box {
         box-sizing: border-box;
         min-width: 6.5em;
-        min-height: 3em;
+        min-height: calc(3.6em + 2px);
         margin: 0;
         padding: 0 1em;
         border: 1px solid #ddd;

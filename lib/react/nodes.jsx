@@ -183,7 +183,11 @@ class Nodes extends React.Component {
                 $value: '',
             })
         }).then((res) => {
-            return res.json();
+            if(res.ok) {
+                return res.json();
+            } else {
+                this.handleErrorStatus(res.status);
+            }
         }).then((res) => {
             this.setState(
                 updateNode(
@@ -217,7 +221,7 @@ class Nodes extends React.Component {
                 this.Stems.redraw();
                 this.forceUpdate();
             } else {
-                console.log(res.status);
+                this.handleErrorStatus(res.status);
             }
         });
     }
@@ -243,7 +247,7 @@ class Nodes extends React.Component {
                     }
                 }
             } else {
-                console.log(res.status);
+                this.handleErrorStatus(res.status);
             }
         });
     }
@@ -302,6 +306,14 @@ class Nodes extends React.Component {
         this.selectedNodes = {};
         document.removeEventListener('mousedown', this.handleClearCallback, {capture: true});
         delete this.handleClearCallback;
+    }
+    handleErrorStatus(status) {
+        switch(status) {
+            case 403:
+                window.location.reload();
+            default:
+                console.log(status);
+        }
     }
     setStems() {
         this.Stems = new Stems({

@@ -141,15 +141,18 @@ class Node extends React.Component {
         this.setState({value: e.target.value});
     }
     handleFocus(e) {
-        this.node_el.classList.add('is_selected');
+        this.props.onClearSelectedNodes();
     }
     handleBlur(e) {
-        this.node_el.classList.remove('is_selected');
         this.handleSubmit(e);
     }
     handleMouseDown(e) {
-        if(this.props.is_logged_in && this.props.Draggable) {
-            if(e.target.tagName.match(/TEXTAREA|INPUT|BUTTON/)) return;
+        if(!(this.props.is_logged_in && this.props.Draggable)) return;
+        if(e.metaKey || e.ctrlKey) {
+            e.preventDefault();
+            this.props.onSelectNode(this.node_el, this.handleSubmit);
+        } else {
+            if(e.target.tagName.match(/A|TEXTAREA|INPUT|BUTTON/)) return;
             document.addEventListener('mouseup', this.handleSubmit, {capture: false, once: true});
         }
     }
@@ -171,10 +174,11 @@ class Node extends React.Component {
     }
     handleSubmit(e) {
         if(e && e.preventDefault) e.preventDefault();
-        this.setState({position: this.getPosition()});
-        this.props.onUpdateNode(this.state.node_id, {
-            value: this.state.value,
-            position: this.state.position,
+        this.setState({position: this.getPosition()}, () => {
+            this.props.onUpdateNode(this.state.node_id, {
+                value: this.state.value,
+                position: this.state.position,
+            });
         });
     }
     handleDelete(e) {

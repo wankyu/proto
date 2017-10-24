@@ -8,6 +8,7 @@ import fSum from '../sum';
 const Sum = new fSum(4, 2);
 
 let default_root_node_id = "0";
+let node_selected_className = "is_selected";
 
 const NodesView = ({nodes, ...props}) =>
     <div className="nodes" data-root={props.root_node_id}>
@@ -120,12 +121,15 @@ class Nodes extends React.Component {
             root_node_id: Url.parse(document.currentScript.src).query || default_root_node_id
         };
         this.modules = {};
+        this.selectedNodes = {};
         this.handleCreateNode = this.handleCreateNode.bind(this);
         this.handleUpdateNode = this.handleUpdateNode.bind(this);
         this.handleDeleteNode = this.handleDeleteNode.bind(this);
         this.handleCreateNewNode = this.handleCreateNewNode.bind(this);
         this.handleAddLink = this.handleAddLink.bind(this);
         this.handleRemoveLink = this.handleRemoveLink.bind(this);
+        this.handleSelectNode = this.handleSelectNode.bind(this);
+        this.handleClearSelectedNodes = this.handleClearSelectedNodes.bind(this);
     }
     componentDidUpdate(prevProps, prevState) {
     }
@@ -273,6 +277,32 @@ class Nodes extends React.Component {
             document.getElementById(to_id)
         );
     }
+    handleSelectNode(el, callback = () => {}) {
+        if(!el.classList.toggle(node_selected_className)) {
+            delete this.selectedNodes[el.id];
+            return;
+        }
+        this.selectedNodes[el.id] = {
+            el: el,
+            submit: callback
+        };
+        if(typeof this.handleClearCallback == 'undefined') {
+            this.handleClearCallback = (e) => {
+                if(e.target.closest('.node')) return;
+                this.handleClearSelectedNodes();
+            };
+            document.addEventListener('mousedown', this.handleClearCallback, {capture: true});
+        }
+    }
+    handleClearSelectedNodes() {
+        for(let id in this.selectedNodes) {
+            this.selectedNodes[id].el.classList.remove(node_selected_className);
+            this.selectedNodes[id].submit();
+        }
+        this.selectedNodes = {};
+        document.removeEventListener('mousedown', this.handleClearCallback, {capture: true});
+        delete this.handleClearCallback;
+    }
     setStems() {
         this.Stems = new Stems({
             container_element: ReactDOM.findDOMNode(this)
@@ -286,18 +316,31 @@ class Nodes extends React.Component {
             onDragInit: () => {
             },
             onDragStart: (e, el, pos) => {
-                //console.log('start', pos);
                 el.classList.add('is_dragging');
+                for(let id in this.selectedNodes) {
+                    this.selectedNodes[id].el.classList.add('is_dragging');
+                }
             },
             onDragging: (e, el, pos) => {
-                //console.log('moving', pos);
                 setNodePosition(el, pos);
                 setLinksPosition(el);
+                for(let id in this.selectedNodes) {
+                    let el = this.selectedNodes[id].el;
+                    let pos_orig = Sum.extract(el.dataset['position']);
+                    setNodePosition(el, {
+                        x: pos_orig[1] + pos.offsetX,
+                        y: pos_orig[0] + pos.offsetY,
+                    });
+                    //setLinksPosition(el);
+                }
                 this.Stems.redraw();
             },
             onDragEnd: (e, el, pos) => {
-                //console.log('end', pos, el.offsetTop << 16 | el.offsetLeft);
                 el.classList.remove('is_dragging');
+                for(let id in this.selectedNodes) {
+                    this.selectedNodes[id].el.classList.remove('is_dragging');
+                    this.selectedNodes[id].submit();
+                }
             }
         });
         Object.assign(this.modules, {Draggable: this.Draggable});
@@ -378,6 +421,8 @@ class Nodes extends React.Component {
                     onRemoveLink={this.handleRemoveLink}
                     onUpdateNode={this.handleUpdateNode}
                     onDeleteNode={this.handleDeleteNode}
+                    onSelectNode={this.handleSelectNode}
+                    onClearSelectedNodes={this.handleClearSelectedNodes}
                 />
             </div>
         );

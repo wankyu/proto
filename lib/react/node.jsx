@@ -127,10 +127,11 @@ class Node extends React.Component {
                     );
             }
             this.state.node_links.forEach((node_to_id, i, arr) => {
-                this.props.Stems.addEquivalent(
-                    document.getElementById(this.state.node_id),
-                    document.getElementById(node_to_id)
-                );
+                if(document.getElementById(node_to_id))
+                    this.props.Stems.addEquivalent(
+                        document.getElementById(this.state.node_id),
+                        document.getElementById(node_to_id)
+                    );
             });
         }
     }
@@ -216,6 +217,7 @@ class Node extends React.Component {
                         <button className="delete" type="submit" value="Delete" aria-label="Delete" onClick={this.handleDelete} />
                         <a className="url" href={`/${this.state.node_id}`} aria-label="URL">URL</a>
                         {this.props.node_links.map((link, index) => (
+                            document.getElementById(link) &&
                             <LinkStem 
                                 key={link}
                                 node_from_id={this.state.node_id}

@@ -9,7 +9,11 @@ import fSum from '../sum';
 const Sum = new fSum(4, 2);
 
 let default_root_node_id = "0";
+let node_base_className = "node";
 let node_selected_className = "is_selected";
+let node_ondrag_className = "is_dragging";
+let node_onlink_className = "is_linking";
+let link_handle_id = "___link_handle";
 
 const NodesView = ({nodes, ...props}) =>
     <div className="nodes" data-root={props.root_node_id}>
@@ -334,9 +338,9 @@ class Nodes extends React.Component {
             onDragInit: () => {
             },
             onDragStart: (e, el, pos) => {
-                el.classList.add('is_dragging');
+                el.classList.add(node_ondrag_className);
                 for(let id in this.selectedNodes) {
-                    this.selectedNodes[id].el.classList.add('is_dragging');
+                    this.selectedNodes[id].el.classList.add(node_ondrag_className);
                 }
             },
             onDragging: (e, el, pos) => {
@@ -354,9 +358,9 @@ class Nodes extends React.Component {
                 this.Stems.redraw();
             },
             onDragEnd: (e, el, pos) => {
-                el.classList.remove('is_dragging');
+                el.classList.remove(node_ondrag_className);
                 for(let id in this.selectedNodes) {
-                    this.selectedNodes[id].el.classList.remove('is_dragging');
+                    this.selectedNodes[id].el.classList.remove(node_ondrag_className);
                     this.selectedNodes[id].submit();
                 }
             }
@@ -364,38 +368,51 @@ class Nodes extends React.Component {
         Object.assign(this.modules, {Draggable: this.Draggable});
     }
     setLinkable() {
-        let target_className = 'node';
-        let findParent = (el, className) => {
-            while(el.classList && !el.classList.contains(className)) {
-                if(el == document) break;
-                el = el.parentNode;
-            }
-            return el;
-        };
         this.Linkable = new Draggable({
             eventListener_capturing: true,
             boundary_element: document.body,
             drag_handle_elements: [],
             onDragInit: () => {
+                let link_handle = document.createElement('div');
+                link_handle.id = link_handle_id;
+                Object.assign(link_handle.style, {
+                    display: 'none',
+                    position: 'absolute',
+                    margin: '1px',
+                    pointerEvents: 'none',
+                });
+                document.body.appendChild(link_handle);
             },
             onDragStart: (e, el, pos) => {
-                let node_from = findParent(el, target_className);
-                if(node_from != document) {
-                    node_from.classList.add('is_linking');
-                    //console.log('from', node_from.id);
-                }
+                let node_from = el.closest(`.${node_base_className}`);
+                let link_handle = document.getElementById(link_handle_id);
+                node_from.classList.add(node_onlink_className);
+                Object.assign(link_handle.style, {
+                    display: 'block',
+                    top: `${pos.y}px`,
+                    left: `${pos.x}px`,
+                });
+                this.Stems.addEquivalent(node_from, link_handle);
+                this.Stems.redraw();
             },
             onDragging: (e, el, pos) => {
                 e.preventDefault();
-                //this.Stems.redraw();
-                //el.style.top = `${Math.max(pos.y, 0)}px`;
-                //el.style.left = `${Math.max(pos.x, 0)}px`;
+                let link_handle = document.getElementById(link_handle_id);
+                Object.assign(link_handle.style, {
+                    top: `${e.clientY}px`,
+                    left: `${e.clientX}px`,
+                });
+                this.Stems.redraw();
             },
             onDragEnd: (e, el, pos) => {
-                let target = findParent(e.target, target_className);
-                //console.log('to', target.id);
-                findParent(el, target_className).classList.remove('is_linking');
-                document.dispatchEvent(new CustomEvent('linked', {detail: {node_to_id: target.id}}));
+                let node_from = el.closest(`.${node_base_className}`);
+                let node_to = e.target.closest(`.${node_base_className}`) || {};
+                let link_handle = document.getElementById(link_handle_id);
+                node_from.classList.remove(node_onlink_className);
+                link_handle.style.display = 'none';
+                this.Stems.removeEquivalent(node_from, link_handle);
+                this.Stems.redraw();
+                document.dispatchEvent(new CustomEvent('linked', {detail: {node_to_id: node_to.id}}));
             }
         });
         Object.assign(this.modules, {Linkable: this.Linkable});

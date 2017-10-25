@@ -4,6 +4,7 @@ import Url from 'url';
 import Node from './node.jsx';
 import Draggable from '../draggable';
 import Stems from '../stems';
+import {Esc} from '../escListener';
 import fSum from '../sum';
 const Sum = new fSum(4, 2);
 
@@ -130,6 +131,11 @@ class Nodes extends React.Component {
         this.handleRemoveLink = this.handleRemoveLink.bind(this);
         this.handleSelectNode = this.handleSelectNode.bind(this);
         this.handleClearSelectedNodes = this.handleClearSelectedNodes.bind(this);
+        Esc.addHandler(this.handleClearSelectedNodes);
+        Esc.addHandler((e) => {
+            if(e.target.tagName == 'TEXTAREA')
+                e.target.blur();
+        });
     }
     componentDidUpdate(prevProps, prevState) {
     }

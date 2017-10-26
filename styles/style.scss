@@ -361,3 +361,28 @@ a {
         }
     }
 }
+
+.login_fieldset {
+    & {
+        display: inline-block;
+        margin: 1em;
+        border: 1px solid #ddd;
+    }
+    legend {
+        font-size: 2em;
+    }
+    input[type=text],
+    input[type=password] {
+        box-sizing: border-box;
+        padding: 0 0.75em;;
+        line-height: 2em;
+    }
+    input[type=submit] {
+        padding: 0 0.75em;;
+        border: none;
+        line-height: 2em;
+        background-color: transparent;
+        -webkit-apearance: none;
+    }
+}
+

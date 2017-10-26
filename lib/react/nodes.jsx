@@ -263,8 +263,9 @@ class Nodes extends React.Component {
     }
     handleCreateNewNode(e) {
         e.preventDefault();
-        let default_position = 0;
-        this.handleCreateNode(e, this.state.root_node_id, default_position);
+        let container_style = ReactDOM.findDOMNode(this).style;
+        let current_position = Sum.create(-1 * parseInt(container_style.top), -1 * parseInt(container_style.left));
+        this.handleCreateNode(e, this.state.root_node_id, current_position);
     }
     handleAddLink(from_id) {
         document.addEventListener('linked', (e) => {

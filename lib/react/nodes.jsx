@@ -146,7 +146,7 @@ class Nodes extends React.Component {
     componentWillMount() {
     }
     componentDidMount() {
-        let fetch_url = (this.state.root_node_id != default_root_node_id)?`/node/${this.state.root_node_id}`:'/node';
+        let fetch_url = (this.state.root_node_id != default_root_node_id)?`./node/${this.state.root_node_id}`:'./node';
         fetch(fetch_url, {
             method: 'GET',
             credentials: 'include',
@@ -178,7 +178,7 @@ class Nodes extends React.Component {
         //let init_position = {x: e.clientX, y: e.clientY}
         let init_position_margin = 30;
         pos = pos + Sum.create(init_position_margin, init_position_margin);
-        fetch('/node', {
+        fetch('./node', {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -209,7 +209,7 @@ class Nodes extends React.Component {
     handleUpdateNode(id, data = {}) {
         if(this.state.nodes[id] == 'undefined') this.state.nodes[id] = {};
         data = Object.assign(this.state.nodes[id], data);
-        fetch('/node/' + id, {
+        fetch('./node/' + id, {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -236,7 +236,7 @@ class Nodes extends React.Component {
         });
     }
     handleDeleteNode(id) {
-        fetch('/node/' + id, {
+        fetch('./node/' + id, {
             method: 'DELETE',
             credentials: 'include',
         }).then((res) => {

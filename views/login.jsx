@@ -20,7 +20,7 @@ class Login extends React.Component {
                 <html>
                 <head>
                     <title>Login</title>
-                    <link rel="stylesheet" href="/css/style.css" />
+                    <link rel="stylesheet" href="./css/style.css" />
                 </head>
                 <body>
                     <Form referer={this.props.referer} />

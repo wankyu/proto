@@ -193,7 +193,6 @@ a {
         font-family: monospace;
         font-size: 16px;
         color: #555;
-        white-space: nowrap;
         background-color: #fff;
         resize: none;
     }
@@ -204,6 +203,7 @@ a {
         bottom: 0;
         left: 0;
         width: 100%;
+        min-height: 100%;
         padding-top: 1.2em;
         padding-bottom: 1.2em;
         opacity: 0;
@@ -337,6 +337,7 @@ a {
         & {
             @extend %box;
             display: block;
+            white-space: nowrap;
         }
         h1, h2, h3, h4, h5 {
             margin: 0.5em 0;

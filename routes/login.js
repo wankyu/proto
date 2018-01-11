@@ -4,14 +4,20 @@ const router = express.Router();
 const readlineSync = require('readline-sync');
 const getArgv = require('../lib/getArgv');
 
-let user_name = getArgv('-u', '--user') || readlineSync.question('Name: ', {});
-let user_passwd = readlineSync.questionNewPassword('Password: ', {
-	mask: '',
-	min: 6,
-	confirmMessage: 'Confirm Password: ',
-	limitMessage: 'Not available password. Try another.',
-});
-console.log('Ok');
+if(process.env.NODE_ENV == 'development') {
+    user_name = 'test';
+    user_passwd = 'test';
+    console.log('Ok: Dev environment');
+} else {
+    let user_name = getArgv('-u', '--user') || readlineSync.question('Name: ', {});
+    let user_passwd = readlineSync.questionNewPassword('Password: ', {
+        mask: '',
+        min: 6,
+        confirmMessage: 'Confirm Password: ',
+        limitMessage: 'Not available password. Try another.',
+    });
+    console.log('Ok');
+}
 
 router.get('/', function(req, res, next) {
     let referer_path = url.parse(req.headers.referer || '/').pathname;

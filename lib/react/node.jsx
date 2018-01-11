@@ -136,7 +136,6 @@ class Node extends React.Component {
         }
     }
     componentDidUpdate() {
-        this.props.Stems.redraw();
     }
     handleValueChange(e) {
         this.setState({value: e.target.value});

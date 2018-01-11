@@ -394,7 +394,6 @@ class Nodes extends React.Component {
                     left: `${pos.x}px`,
                 });
                 this.Stems.addEquivalent(node_from, link_handle);
-                this.Stems.redraw();
             },
             onDragging: (e, el, pos) => {
                 e.preventDefault();

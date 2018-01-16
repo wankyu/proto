@@ -4,6 +4,10 @@ import ReactMarkdown from 'react-markdown';
 import fSum from '../sum';
 const Sum = new fSum(4, 2);
 
+const config = {
+    title_declarator: "[#title#]:"
+};
+
 const InputView = (props) => {
     return (
         <textarea
@@ -88,6 +92,7 @@ class Node extends React.Component {
         super(props);
         this.state = {
             node_id: props.node_id,
+            title: props.title,
             value: props.value,
             position: props.position,
             node_parent: props.node_parent,
@@ -138,7 +143,11 @@ class Node extends React.Component {
     componentDidUpdate() {
     }
     handleValueChange(e) {
-        this.setState({value: e.target.value});
+        let val = e.target.value;
+        this.setState({
+            value: val,
+            title: (val.split(/[\r\n]/, 1)[0].split(config.title_declarator)[1] || this.state.title).trim()
+        });
     }
     handleFocus(e) {
         this.props.onClearSelectedNodes();
@@ -176,6 +185,7 @@ class Node extends React.Component {
         if(e && e.preventDefault) e.preventDefault();
         this.setState({position: this.getPosition()}, () => {
             this.props.onUpdateNode(this.state.node_id, {
+                title: this.state.title,
                 value: this.state.value,
                 position: this.state.position,
             });
@@ -202,6 +212,7 @@ class Node extends React.Component {
     render() {
         return (
             <div id={this.state.node_id} className="node"
+                title={(this.state.node_id != this.state.title)?this.state.title:undefined}
                 data-position={this.state.position}
                 //data-parent_id={this.state.node_parent}
                 style={this.state.style}

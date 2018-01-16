@@ -163,7 +163,7 @@ class Nodes extends React.Component {
             this.setState({'is_logged_in': data.pop()});
             let tmp = {};
             data.map((node) => {
-                tmp[node.node_id] = Object.assign(node, this.modules);
+                tmp[node.node_id] = Object.assign(node, this.modules, {title: node.node_id});
             });
             this.setState({'nodes': tmp}, () => {
                 Object.keys(this.state.nodes).map((id, index) => {
@@ -202,7 +202,7 @@ class Nodes extends React.Component {
             this.setState(
                 updateNode(
                     res.node_id,
-                    Object.assign(res, this.modules)
+                    Object.assign(res, this.modules, {title: res.node_id})
                 ));
         });
     }
@@ -221,6 +221,7 @@ class Nodes extends React.Component {
                 $node_links: data.node_links,
                 $time: Date.now(),
                 $position: data.position,
+                //$title: data.title,
                 $value: data.value,
             })
         }).then((res) => {

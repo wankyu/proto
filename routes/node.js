@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const express = require('express');
 const router = express.Router();
-const sqlite = require('../lib/sqlite/sqlite.js');
+const sqlite = require('../lib/db/sqlite.js');
 
 if(!fs.existsSync('.local')) {
     fs.mkdirSync('.local');

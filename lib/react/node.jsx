@@ -44,10 +44,9 @@ class Input extends React.Component {
     componentWillUnmount() {
     }
     render() {
-        let value = this.props.value;
         return (
             <InputView
-                value={value}
+                value={this.props.value}
                 onChange={this.props.onValueChange}
                 onFocus={this.props.onFocus}
                 onBlur={this.props.onBlur}
@@ -144,9 +143,10 @@ class Node extends React.Component {
     }
     handleValueChange(e) {
         let val = e.target.value;
+        let tit = (val.split(/[\r\n]/, 1)[0].split(config.title_declarator)[1] || this.state.title).trim(); //[TODO] sanitize, check duplication
         this.setState({
             value: val,
-            title: (val.split(/[\r\n]/, 1)[0].split(config.title_declarator)[1] || this.state.title).trim()
+            title: tit,
         });
     }
     handleFocus(e) {
@@ -210,9 +210,10 @@ class Node extends React.Component {
         return Sum.create(y, x);
     }
     render() {
+        let title = (this.state.node_id != this.state.title)?this.state.title:undefined;
         return (
             <div id={this.state.node_id} className="node"
-                title={(this.state.node_id != this.state.title)?this.state.title:undefined}
+                title={title}
                 data-position={this.state.position}
                 //data-parent_id={this.state.node_parent}
                 style={this.state.style}
@@ -225,7 +226,7 @@ class Node extends React.Component {
                         <button className="add_child" type="submit" value="Add Child" aria-label="Add Child" onClick={this.handleAddChild} />
                         <button className="add_link" type="submit" value="Add Link" aria-label="Add Link" onMouseDown={this.handleAddLink} />
                         <button className="delete" type="submit" value="Delete" aria-label="Delete" onClick={this.handleDelete} />
-                        <a className="url" href={`./${this.state.node_id}`} aria-label="URL">URL</a>
+                        <a className="url" href={`./${this.state.node_id}`} aria-label="URL">{title || "URL"}</a>
                         {this.props.node_links.map((link, index) => (
                             document.getElementById(link) &&
                             <LinkStem 

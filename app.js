@@ -35,7 +35,7 @@ app.use(session({
     }
 }));
 app.use(sassMiddleware({
-    src: path.join(__dirname, 'styles'),
+    src: path.join(__dirname, 'client', 'styles'),
     dest: path.join(__dirname, 'public', 'css'),
     prefix: '/css',
     sourceMap: true,

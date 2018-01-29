@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import ReactMarkdown from 'react-markdown';
-import fSum from '../sum';
+import fSum from '../lib/sum';
 const Sum = new fSum(4, 2);
 
 const config = {

@@ -3,7 +3,7 @@ const path = require('path');
 
 module.exports = {
     entry: {
-        nodes: path.join(__dirname, 'lib', 'react', 'nodes.jsx')
+        nodes: path.join(__dirname, 'client', 'nodes', 'nodes.jsx')
         //,test: path.join(__dirname, 'lib', 'react', 'client.jsx')
     },
     output: {
@@ -12,10 +12,10 @@ module.exports = {
     },
     module: {
         loaders: [{
-            test: path.join(__dirname, 'lib'),
+            test: path.join(__dirname, 'client'),
             loader: 'babel-loader',
             options: {
-                cacheDirectory: 'babel_cache',
+                cacheDirectory: '.babel_cache',
                 presets: ['react', 'es2015', 'stage-3']
             }
         }]

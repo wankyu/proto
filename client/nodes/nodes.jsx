@@ -2,10 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Url from 'url';
 import Node from './node.jsx';
-import Draggable from '../draggable';
-import Stems from '../stems';
-import {Esc} from '../escListener';
-import fSum from '../sum';
+import Draggable from '../lib/draggable';
+import Stems from '../lib/stems';
+import {Esc} from '../lib/escListener';
+import fSum from '../lib/sum';
 const Sum = new fSum(4, 2);
 
 let default_root_node_id = "0";

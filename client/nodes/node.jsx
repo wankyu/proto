@@ -113,6 +113,7 @@ class Node extends React.Component {
     componentWillMount() {
     }
     componentDidMount() {
+        this.checkTitle(this.state.value);
         let el = this.node_el = ReactDOM.findDOMNode(this);
         this.setPosition();
         if(this.props.is_logged_in && this.props.Draggable) {
@@ -143,11 +144,8 @@ class Node extends React.Component {
     }
     handleValueChange(e) {
         let val = e.target.value;
-        let tit = (val.split(/[\r\n]/, 1)[0].split(config.title_declarator)[1] || this.state.title).trim(); //[TODO] sanitize, check duplication
-        this.setState({
-            value: val,
-            title: tit,
-        });
+        this.checkTitle(val);
+        this.setState({value: val});
     }
     handleFocus(e) {
         this.props.onClearSelectedNodes();
@@ -201,6 +199,11 @@ class Node extends React.Component {
     }
     setLink() {
     }
+    checkTitle(val) {
+        let tit = val.split(/[\r\n]/, 1)[0].split(config.title_declarator)[1] || this.state.title; //[TODO] sanitize, check duplication
+        tit = encodeURI(tit.trim());
+        this.setState({title: tit});
+    }
     getPosition() {
         let el = this.node_el;
         let [y, x] = [
@@ -226,7 +229,11 @@ class Node extends React.Component {
                         <button className="add_child" type="submit" value="Add Child" aria-label="Add Child" onClick={this.handleAddChild} />
                         <button className="add_link" type="submit" value="Add Link" aria-label="Add Link" onMouseDown={this.handleAddLink} />
                         <button className="delete" type="submit" value="Delete" aria-label="Delete" onClick={this.handleDelete} />
-                        <a className="url" href={`./${this.state.node_id}`} aria-label="URL">{title || "URL"}</a>
+                        <a
+                            className="url"
+                            href={`./${this.state.node_id}${typeof title !== 'undefined' ? '_' + title : ''}`}
+                            aria-label="URL"
+                        >{title || "URL"}</a>
                         {this.props.node_links.map((link, index) => (
                             document.getElementById(link) &&
                             <LinkStem 
